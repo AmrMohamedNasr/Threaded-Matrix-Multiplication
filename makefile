@@ -41,7 +41,7 @@ $(OBJECT_DIR)/%.o: $(SOURCE_DIR)/%.c $(HEADERS)
 # Check for any change in object, if there is a change reproduce the target file.
 $(TARGET): $(OBJECTS)
 	# Compile the final program.
-	$(COMPILER) -o $(TARGET_DIR)/$@ $^ $(ICHF)
+	$(COMPILER) -o $(TARGET_DIR)/$@ $^ $(ICHF) -pthread
 # Add option to make, if option entered it will do the suitable action.
 .PHONY: clean
 # Delete all generated files by make.

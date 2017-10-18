@@ -1,6 +1,8 @@
 #ifndef MATRIX_OPERATIONS_H_INCLUDED
 #define MATRIX_OPERATIONS_H_INCLUDED
 
+#include "matrix.h"
+
 // Structure containing all the arguments needed for matrix operations.
 typedef struct matrix_operations_arguments {
     MATRIX * a;
@@ -16,7 +18,7 @@ typedef struct matrix_operations_arguments {
      @args
      - Supposdely a void pointer that will be casted to MATRIX_OPERATION_ARGS object.
 **/
-void calculate_element(void * args);
+void * calculate_element(void * args);
 
 /**
     - Calculates a single row in matrix c from the multiplication of
@@ -24,6 +26,6 @@ void calculate_element(void * args);
      @args
      - Supposdely a void pointer that will be casted to MATRIX_OPERATION_ARGS object.
 **/
-void calculate_row(void * args);
+void * calculate_row(void * args);
 
 #endif // MATRIX_OPERATIONS_H_INCLUDED

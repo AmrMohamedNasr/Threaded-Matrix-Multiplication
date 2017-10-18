@@ -2,18 +2,20 @@
 #define FILE_PROCESSING_H_INCLUDED
 
 #include <stdio.h>
-#include <default_values.h>
+#include "../include/default_values.h"
 
 /**
     - Open the file and return a pointer to it.
     @file_name
     - The file name to open.
+    @attr
+    - The suitable attributes to open the file in. ( read, write or append).
     @return
     - A file pointer to the file if it exists, null an error happened during opening it.
     @print
     - Will print to stderr in case of error.
 **/
-FILE * open_file(char const * file_name);
+FILE * open_file(char const * file_name, char const * attr);
 
 /**
     - Checks if the file exists.

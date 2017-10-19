@@ -11,7 +11,7 @@
 // Output matrix file default value if no arguments entered.
 #define     DEFAULT_OUTPUT_MATRIX_FILE       "c.txt"
 
-#define     STRING_MAX_SIZE                   1600
+#define     STRING_MAX_SIZE                   6000
 // Boolean values represnting true and false.
 typedef enum {true = 1, false = 0} bool;
 

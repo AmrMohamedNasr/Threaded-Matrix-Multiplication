@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "../include/default_values.h"
 
 // Implementation (Documentation in header).
 int multiply_threaded_elements(MATRIX * a, MATRIX * b, MATRIX * c) {
@@ -15,8 +16,10 @@ int multiply_threaded_elements(MATRIX * a, MATRIX * b, MATRIX * c) {
     MATRIX_OPERATION_ARGS * args[n];
     // Will hold return value of thread creation.
     int rc;
+    // Error check to break out of loop in case of error.
+    bool no_error = true;
     // Loop over rows of matrix a.
-    for (i = 0; i < a->rows; i++) {
+    for (i = 0; i < a->rows && no_error; i++) {
         // Loop over columns of matrix b.
         for (j = 0; j < b->cols; j++) {
             // Prepare the arguments.
@@ -31,6 +34,7 @@ int multiply_threaded_elements(MATRIX * a, MATRIX * b, MATRIX * c) {
             // If error during creation, end execution and print warning message.
             if (rc) {
                 fprintf(stderr, "ERROR during creation of thread in threaded element method with return code %d\n", rc);
+                no_error = false;
                 break;
             }
             // Increase the number of created threads if creation is successfull.

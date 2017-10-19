@@ -3,8 +3,24 @@
 #include "../include/matrix_multiplicator_app.h"
 #include "../include/default_values.h"
 
+#include "../include/matrix.h"
+#include "../include/matrix_file_processor.h"
+
 int main(int argc, char * argv[])
 {
+//    MATRIX a,b;
+//    int size = 3;
+//    init_matrix(&a, size, size);
+//    init_matrix(&b, size, size);
+//    int i = 0, j = 0;
+//    for (i = 0; i < size; i++) {
+//        for (j = 0; j < size; j++) {
+//            a.matrix_elements[i][j] = (i + 1) * (j + 1);
+//            b.matrix_elements[j][i] = (i + 1) * (j + 1);
+//        }
+//    }
+//    write_matrix(a, "a.txt");
+//    write_matrix(b, "b.txt");
     // Check number of arguments.
     // If 4 : meaning command and three others. pass them as the file names.
     if (argc == 4) {

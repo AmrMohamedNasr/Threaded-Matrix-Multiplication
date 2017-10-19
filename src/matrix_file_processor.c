@@ -86,7 +86,7 @@ bool read_matrix(MATRIX * matrix_read, const char * file_name) {
                 i++;
             }
             if (i != col) {
-                fprintf(stderr, "Line %d in file %s has wrong number of columns !\n", matrix_lines_read + 1, file_name);
+                fprintf(stderr, "Line %d in file %s has wrong number of columns : found %d expected %d...!\n", matrix_lines_read + 1, file_name, i, col);
             }
         }
         matrix_lines_read++;
@@ -94,7 +94,7 @@ bool read_matrix(MATRIX * matrix_read, const char * file_name) {
     }
     close_file(file);
     if (matrix_lines_read != row) {
-        fprintf(stderr, "Invalid rows found : might be more or less than specified.\n");
+        fprintf(stderr, "Invalid rows found : found %d expected %d ...\n", matrix_lines_read, row);
         return false;
     }
     return true;

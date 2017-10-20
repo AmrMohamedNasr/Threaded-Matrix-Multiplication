@@ -13,7 +13,7 @@
     @c
     - The output matrix.
     @return
-    - The number of threads used.
+    - The number of threads used, will be multiplied by -1 in case of error.
     @print
     - On stderr if an error happens during the creation of a thread.
 **/
@@ -29,7 +29,7 @@ int multiply_threaded_elements(MATRIX * a, MATRIX * b, MATRIX * c);
     @c
     - The output matrix.
     @return
-    - The number of threads used.
+    - The number of threads used, will be multiplied by -1 in case of error.
     @print
     - On stderr if an error happens during the creation of a thread.
 **/

@@ -6,7 +6,7 @@
 #include "../include/matrix_multiplier.h"
 
 #define         LIMIT           1000
-
+#define         SAMPLE_EACH     10
 /**
     - Writes a stat line containing the time taken taken for each method, number of rows of a, number of columns of a
     and number of columns of b.
@@ -27,7 +27,7 @@ void write_stats_line(FILE * file, int a_row, int a_col, int b_row, int b_col);
 void write_stats_square_matrix() {
     int size = 1;
     FILE * file = open_file("square_stat.txt", "w");
-    for (size = 1; size <= LIMIT; size++) {
+    for (size = 1; size <= LIMIT; size += SAMPLE_EACH) {
         write_stats_line(file, size, size, size, size);
     }
     close_file(file);
@@ -39,7 +39,7 @@ void write_stats_one_row_matrix_a_constant_b_col(int b_const_col) {
     char temp[STRING_MAX_SIZE];
     sprintf(temp, "%s_%d.txt", "one_row_a_b_col", b_const_col);
     FILE * file = open_file(temp, "w");
-    for (size = 1; size <= LIMIT; size++) {
+    for (size = 1; size <= LIMIT; size += SAMPLE_EACH) {
         write_stats_line(file, 1, size, size, b_const_col);
     }
     close_file(file);
@@ -51,7 +51,7 @@ void write_stats_one_column_matrix_a_constant_b_col(int b_const_col) {
     char temp[STRING_MAX_SIZE];
     sprintf(temp, "%s_%d.txt", "one_col_a_b_col", b_const_col);
     FILE * file = open_file(temp, "w");
-    for (size = 1; size <= LIMIT; size++) {
+    for (size = 1; size <= LIMIT; size += SAMPLE_EACH) {
         write_stats_line(file, size, 1, 1, b_const_col);
     }
     close_file(file);
@@ -61,7 +61,7 @@ void write_stats_one_column_matrix_a_constant_b_col(int b_const_col) {
 void write_stats_one_row_matrix_a_matching_b_col() {
     int size = 1;
     FILE * file = open_file("one_row_a.txt", "w");
-    for (size = 1; size <= LIMIT; size++) {
+    for (size = 1; size <= LIMIT; size += SAMPLE_EACH) {
         write_stats_line(file, 1, size, size, size);
     }
     close_file(file);
@@ -71,7 +71,7 @@ void write_stats_one_row_matrix_a_matching_b_col() {
 void write_stats_one_column_matrix_a_matching_b_col() {
     int size = 1;
     FILE * file = open_file("one_col_a.txt", "w");
-    for (size = 1; size <= LIMIT; size++) {
+    for (size = 1; size <= LIMIT; size += SAMPLE_EACH) {
         write_stats_line(file, size, 1, 1, size);
     }
     close_file(file);
@@ -125,7 +125,7 @@ void write_stats_line(FILE * file, int a_row, int a_col, int b_row, int b_col) {
     multiply_sequentiel(&a, &b, &c);
     gettimeofday(&stop, NULL);
     time_seq = (stop.tv_sec - start.tv_sec) + (1e-6) * (stop.tv_usec - start.tv_usec);
-    fprintf(file, "%d\t%d\t%d\t%f\t%f\t%f", a_row, a_col, b_col, time_seq, time_row, time_ele);
+    fprintf(file, "%d\t%d\t%d\t%f\t%f\t%f\n", a_row, a_col, b_col, time_seq, time_row, time_ele);
     free_matrix(&a);
     free_matrix(&b);
     free_matrix(&c);

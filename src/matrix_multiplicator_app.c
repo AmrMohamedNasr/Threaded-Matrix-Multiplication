@@ -33,7 +33,7 @@ void run_matrix_mul_app(const char * input_file_1, const char * input_file_2, co
     }
     // Make sure it is a valid multiplcation operation.
     if (a.cols != b.rows) {
-        fprintf(stderr, "Error in matrixes : first matrix columns must match second matrix columns to be able to multiply them...\nOperation terminated\n");
+        fprintf(stderr, "Error in matrixes : first matrix columns must match second matrix rows to be able to multiply them...\nOperation terminated\n");
         // Free taken resources if any.
         free_matrix(&a);
         free_matrix(&b);
@@ -46,26 +46,16 @@ void run_matrix_mul_app(const char * input_file_1, const char * input_file_2, co
     char temp[STRING_MAX_SIZE];
     double time;
 
-    // Get time , number of threads and result of the element-wise threads method.
-    gettimeofday(&start, NULL);
-    thread_number = multiply_threaded_elements(&a, &b, &c);
-    gettimeofday(&stop, NULL);
-    printf("Number of threads made for <each element computed by a thread>(method 2) : %d\n", thread_number);
-    time = (stop.tv_sec - start.tv_sec) + (1e-6) * (stop.tv_usec - start.tv_usec);
-    printf("Time taken to compute it in seconds =  %f\n", time);
-    // Ready file to write results in.
-    add_subscript(output_file, "_2", temp);
-    // try to write the result matrix.
-    if (!write_matrix(c, temp)) {
-        fprintf(stderr, "Error while trying to write the result of element threaded multiplication.\n");
-    }
-    printf("\n");
-
     // Get time , number of threads and result of second method.
     gettimeofday(&start, NULL);
     thread_number = multiply_threaded_rows(&a, &b, &c);
     gettimeofday(&stop, NULL);
-    printf("Number of threads made for <each row computed by a thread>(method 1) : %d\n", thread_number);
+    if (thread_number > 0) {
+        printf("Number of threads made for <each row computed by a thread>(method 1) : %d\n", thread_number);
+    } else {
+        printf("Failed to create the threads needed sucessfully --> Operation failed !\n");
+        printf("Number of threads made for <each row computed by a thread>(method 1) : %d\n", -thread_number);
+    }
     time = (stop.tv_sec - start.tv_sec) + (1e-6) * (stop.tv_usec - start.tv_usec);
     printf("Time taken to compute it in seconds =  %f\n", time);
     // Ready file to write results in.
@@ -73,6 +63,26 @@ void run_matrix_mul_app(const char * input_file_1, const char * input_file_2, co
     // try to write the result matrix.
     if (!write_matrix(c, temp)) {
         fprintf(stderr, "Error while trying to write the result of row threaded multiplication.\n");
+    }
+    printf("\n");
+
+    // Get time , number of threads and result of the element-wise threads method.
+    gettimeofday(&start, NULL);
+    thread_number = multiply_threaded_elements(&a, &b, &c);
+    gettimeofday(&stop, NULL);
+    if (thread_number > 0) {
+        printf("Number of threads made for <each element computed by a thread>(method 2) : %d\n", thread_number);
+    } else {
+        printf("Failed to create the threads needed sucessfully --> Operation failed !\n");
+        printf("Number of threads made for <each element computed by a thread>(method 2) : %d\n", -thread_number);
+    }
+    time = (stop.tv_sec - start.tv_sec) + (1e-6) * (stop.tv_usec - start.tv_usec);
+    printf("Time taken to compute it in seconds =  %f\n", time);
+    // Ready file to write results in.
+    add_subscript(output_file, "_2", temp);
+    // try to write the result matrix.
+    if (!write_matrix(c, temp)) {
+        fprintf(stderr, "Error while trying to write the result of element threaded multiplication.\n");
     }
     printf("\n");
 

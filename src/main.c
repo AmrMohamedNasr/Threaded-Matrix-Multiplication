@@ -7,11 +7,24 @@
 
 int main(int argc, char * argv[])
 {
+    /***
+
+    --*---*--           Code used to generate statistques files for comparison              --*---*--
+
     write_stats_square_matrix();
+    printf("finished squared\n");
     write_stats_one_row_matrix_a_matching_b_col();
+    printf("finished one row all varying\n");
     write_stats_one_column_matrix_a_matching_b_col();
+    printf("finished one column all varying\n");
     write_stats_one_column_matrix_a_constant_b_col(50);
+    printf("finished one column constant b col\n");
     write_stats_one_row_matrix_a_constant_b_col(50);
+    printf("finished one row constant b col\n");
+    return;
+
+    ***/
+
     // Check number of arguments.
     // If 4 : meaning command and three others. pass them as the file names.
     if (argc == 4) {

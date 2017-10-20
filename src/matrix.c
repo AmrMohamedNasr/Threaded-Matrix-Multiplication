@@ -8,11 +8,11 @@ void init_matrix(MATRIX * uninit_matrix, int row_number, int col_number) {
     // Set matrix column number.
     uninit_matrix->cols = col_number;
     // allocate memory for the rows in the matrix element.
-    uninit_matrix->matrix_elements = malloc(sizeof(int *) * row_number);
+    uninit_matrix->matrix_elements = malloc(sizeof(long *) * row_number);
     int i = 0;
     for (i = 0; i < row_number; i++) {
         // Allocate memory in each row for the columns.
-        uninit_matrix->matrix_elements[i] = malloc(sizeof(int) * col_number);
+        uninit_matrix->matrix_elements[i] = malloc(sizeof(long) * col_number);
     }
 }
 

@@ -5,7 +5,7 @@
 typedef struct matrix_struct {
     int rows;
     int cols;
-    int ** matrix_elements;
+    long ** matrix_elements;
 } MATRIX;
 
 /**

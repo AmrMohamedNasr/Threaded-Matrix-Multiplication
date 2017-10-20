@@ -32,7 +32,7 @@ void * calculate_row(void * args) {
     MATRIX * a = op_args->a;
     MATRIX * b = op_args->b;
     int row = op_args->a_row;
-    // Loop over the row and column to calculate the element.
+    // Loop over the rows and all columns to calculate the output row.
     int i = 0, j = 0;
     while (i < b->cols) {
         // reset J.

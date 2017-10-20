@@ -20,7 +20,7 @@ void init_matrix(MATRIX * uninit_matrix, int row_number, int col_number) {
 void free_matrix(MATRIX * matrix) {
     if (matrix->matrix_elements != 0) {
         int i = 0;
-        for (i = 0; i < matrix->cols; i++) {
+        for (i = 0; i < matrix->rows; i++) {
             // free memory reserved in each row for the columns.
             if (matrix->matrix_elements[i] != 0) {
                 free(matrix->matrix_elements[i]);

@@ -3,9 +3,24 @@
 #include <stdio.h>
 #include "../include/file_processing.h"
 #include <string.h>
+#include <stdlib.h>
 
 #define         FIRST_LINE_DELIMITER           " =\t\n\r\f"
 #define         DELIMITER                      " \t\n"
+
+/**
+    - Reads a line from a stream. Line ends when EOF or newline are encounted.
+    @output
+    - Pointer to the string pointer that input will be read into, might get resized during the read operation.
+    @size
+    - The current size of the string memory.
+    @source
+    - The stream source to read from.
+    @return
+    - NULL if EOF is encountered, else return the string pointer.
+**/
+char * read_line(char ** ouput, int * size, FILE * source);
+
 // Implementation (Documented in header).
 bool read_matrix(MATRIX * matrix_read, const char * file_name) {
     if (!file_exists(file_name)) {
@@ -16,88 +31,93 @@ bool read_matrix(MATRIX * matrix_read, const char * file_name) {
     if (file == NULL) {
         return false;
     }
+    bool no_error = true;
     int file_counter = 0;
-    char buffer[STRING_MAX_SIZE];
+    char * buffer = malloc(STRING_MAX_SIZE * sizeof(char));
+    int buffer_size = STRING_MAX_SIZE;
     fseek(file, file_counter, SEEK_SET);
-    if (fgets(buffer, STRING_MAX_SIZE, file) == NULL) {
+    if (read_line(&buffer, &buffer_size, file) == NULL) {
         fprintf(stderr, "Invalid file format : empty file\n");
+        no_error = false;
+    }
+    if (!no_error) {
+        free(buffer);
         close_file(file);
         return false;
     }
     file_counter += strlen(buffer);
     char * token;
-    char copy[STRING_MAX_SIZE];
-    strcpy(copy, buffer);
-    token = strtok(copy, FIRST_LINE_DELIMITER);
+    token = strtok(buffer, FIRST_LINE_DELIMITER);
     int i = 0, row , col;
-    while (token != NULL) {
+    while (no_error && token != NULL) {
         if (i == 0) {
             if (strcmp(token, "row") != 0) {
                 fprintf(stderr, "Invalid input format : Expected row keyword to start the file.\n");
-                close_file(file);
-                return false;
+                no_error = false;
             }
         } else if (i == 1) {
             if (sscanf(token, "%d", &row) != 1 || row < 1) {
                 fprintf(stderr, "Invalid row number format : please enter a valid row number\n");
-                close_file(file);
-                return false;
+                no_error = false;
             }
         } else if (i == 2) {
             if (strcmp(token, "col") != 0) {
                 fprintf(stderr, "Invalid input format : Expected col keyword.\n");
-                close_file(file);
-                return false;
+                no_error = false;
             }
         } else if (i == 3) {
             if (sscanf(token, "%d", &col) != 1 || col < 1) {
                 fprintf(stderr, "Invalid column number format : please enter a valid column number\n");
-                close_file(file);
-                return false;
+                no_error = false;
             }
         } else {
             fprintf(stderr, "ERROR : Invalid input in the first line\n");
+            no_error = false;
         }
         token = strtok(NULL, FIRST_LINE_DELIMITER);
         i++;
     }
+    if (!no_error) {
+        free(buffer);
+        close_file(file);
+        return false;
+    }
     init_matrix(matrix_read, row, col);
     int matrix_lines_read = 0;
     fseek(file, file_counter, SEEK_SET);
-    while(fgets(buffer, STRING_MAX_SIZE, file) != NULL) {
+    while(no_error && read_line(&buffer, &buffer_size, file) != NULL) {
         file_counter += strlen(buffer);
         if (matrix_lines_read < row) {
-            strcpy(copy, buffer);
-            token = strtok(copy, DELIMITER);
+            token = strtok(buffer, DELIMITER);
             i = 0;
-            while (token != NULL) {
+            while (no_error && token != NULL) {
                 if (i == col) {
                     fprintf(stderr, "Columns exceed the limit at file %s at line %d\n", file_name,matrix_lines_read + 1);
-                    close_file(file);
-                    return false;
+                    no_error = false;
                 }
                 if (sscanf(token, "%d", &(matrix_read->matrix_elements[matrix_lines_read][i])) != 1) {
                     fprintf(stderr, "Invalid matrix element format : please enter a valid matrix element at file %s at line %d at column %d\n", file_name,
                     matrix_lines_read + 1, i + 1);
-                    close_file(file);
-                    return false;
+                    no_error = false;
                 }
                 token = strtok(NULL, DELIMITER);
                 i++;
             }
-            if (i != col) {
+            if (no_error && i != col) {
                 fprintf(stderr, "Line %d in file %s has wrong number of columns : found %d expected %d...!\n", matrix_lines_read + 1, file_name, i, col);
+                no_error = false;
             }
         }
         matrix_lines_read++;
         fseek(file, file_counter, SEEK_SET);
     }
+    free(buffer);
     close_file(file);
-    if (matrix_lines_read != row) {
+    if (no_error && matrix_lines_read != row) {
         fprintf(stderr, "Invalid rows found : found %d expected %d ...\n", matrix_lines_read, row);
-        return false;
+        no_error = false;
     }
-    return true;
+    return no_error;
 }
 
 // Implementation (Documented in header).
@@ -122,3 +142,30 @@ bool write_matrix(MATRIX matrix, const char * file_name) {
     return true;
 }
 
+// Implementation (Documentation above prototype).
+char * read_line(char ** output, int * size, FILE * source) {
+    int i = 0;
+    char c = fgetc(source);
+    if (c == EOF) {
+        return NULL;
+    }
+    while (c != EOF && c != '\n') {
+        (*output)[i] = c;
+        c = fgetc(source);
+        i++;
+        if (i == *size) {
+            *size *= 2;
+            *output = realloc(*output, *size * sizeof(char));
+        }
+    }
+    if (c != EOF) {
+        (*output)[i] = c;
+        i++;
+        if (i == *size) {
+            *size *= 2;
+            *output = realloc(*output, *size * sizeof(char));
+        }
+    }
+    (*output)[i] = '\0';
+    return *output;
+}

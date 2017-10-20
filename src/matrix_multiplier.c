@@ -10,10 +10,10 @@ int multiply_threaded_elements(MATRIX * a, MATRIX * b, MATRIX * c) {
     int i = 0, j = 0, created_threads = 0;
     // Get number of elements needed which will be also the number of threads.
     int n = a->rows * b->cols;
-    // The number of threads needed.
-    pthread_t threads[n];
-    // Array of arguments.
-    MATRIX_OPERATION_ARGS * args[n];
+    // Allocating the number of threads needed.
+    pthread_t * threads = malloc(n * sizeof(pthread_t));
+    // Allocating the number of arguments needed.
+    MATRIX_OPERATION_ARGS ** args = malloc(sizeof(MATRIX_OPERATION_ARGS * ) * n);
     // Will hold return value of thread creation.
     int rc;
     // Error check to break out of loop in case of error.
@@ -24,6 +24,12 @@ int multiply_threaded_elements(MATRIX * a, MATRIX * b, MATRIX * c) {
         for (j = 0; j < b->cols; j++) {
             // Prepare the arguments.
             args[created_threads] = malloc(sizeof(MATRIX_OPERATION_ARGS));
+            // make sure that an argument object is allocated.
+            if (args[created_threads] == NULL) {
+                fprintf(stderr, "ERROR during allocating memory to thread arguments\n");
+                no_error = true;
+                break;
+            }
             args[created_threads]->a = a;
             args[created_threads]->b = b;
             args[created_threads]->c = c;
@@ -41,27 +47,42 @@ int multiply_threaded_elements(MATRIX * a, MATRIX * b, MATRIX * c) {
             created_threads++;
         }
     }
-    // Wait for all threads to end their work.
+    // Wait for all threads to end their work and free taken resources.
     for (i = 0; i < created_threads; i++) {
         pthread_join(threads[i], NULL);
         free(args[i]);
     }
-    // Return the number of created threads.
-    return created_threads;
+    free(args);
+    free(threads);
+    // Return appropriate value.
+    if (no_error) {
+        // Return the number of created threads.
+        return created_threads;
+    } else {
+        // Return a negative number of the created threads in case of an error.
+        return  -created_threads;
+    }
 }
 
 // Implementation (Documentation in header).
 int multiply_threaded_rows(MATRIX * a, MATRIX * b, MATRIX * c) {
     int i = 0, created_threads = 0;
     // Number of needed threads is equal to the number of rows of a.
-    pthread_t threads[a->rows];
-    MATRIX_OPERATION_ARGS * args[a->rows];
+    pthread_t * threads = malloc(sizeof(pthread_t) * a->rows);
+    // Number of needed arguments is equal to the number of rows of a.
+    MATRIX_OPERATION_ARGS ** args = malloc(sizeof(MATRIX_OPERATION_ARGS *) * a->rows);
     // The return code of thread creation.
     int rc;
     // Loop over the rows of matrix a.
     for (i = 0; i < a->rows; i++) {
         // Prepare the arguments.
         args[created_threads] = malloc(sizeof(MATRIX_OPERATION_ARGS));
+        // Make sure an argument object is allocated.
+        if (args[created_threads] == NULL) {
+            fprintf(stderr, "ERROR during allocating memory to thread arguments\n");
+            rc = 1;
+            break;
+        }
         args[created_threads]->a = a;
         args[created_threads]->b = b;
         args[created_threads]->c = c;
@@ -76,13 +97,20 @@ int multiply_threaded_rows(MATRIX * a, MATRIX * b, MATRIX * c) {
         // Else increment created_threads number.
         created_threads++;
     }
-    // Wait for all threads to finish working.
+    // Wait for all threads to finish working and free resources.
     for (i = 0; i < created_threads; i++) {
         pthread_join(threads[i], NULL);
         free(args[i]);
     }
-    // Return the number of created threads.
-    return created_threads;
+    free(args);
+    free(threads);
+    // If error, return a negative number of the created threads..
+    if (rc) {
+        return -created_threads;
+    } else {
+        // Return the number of created threads.
+        return created_threads;
+    }
 }
 
 // Implementation (Documentation in header).

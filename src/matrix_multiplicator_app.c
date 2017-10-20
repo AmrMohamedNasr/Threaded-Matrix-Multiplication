@@ -78,6 +78,7 @@ void run_matrix_mul_app(const char * input_file_1, const char * input_file_2, co
     if (!write_matrix(c, temp)) {
         fprintf(stderr, "Error while trying to write the result of sequentiel multiplication.\n");
     }
+    // Free resources.
     free_matrix(&a);
     free_matrix(&b);
     free_matrix(&c);

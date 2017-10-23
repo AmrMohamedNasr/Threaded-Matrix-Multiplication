@@ -59,7 +59,7 @@ void run_matrix_mul_app(const char * input_file_1, const char * input_file_2, co
     time = (stop.tv_sec - start.tv_sec) + (1e-6) * (stop.tv_usec - start.tv_usec);
     printf("Time taken to compute it in seconds =  %f\n", time);
     // Ready file to write results in.
-    add_subscript(output_file, "_1", temp);
+    add_subscript(output_file, "_row", temp);
     // try to write the result matrix.
     if (!write_matrix(c, temp)) {
         fprintf(stderr, "Error while trying to write the result of row threaded multiplication.\n");
@@ -79,15 +79,12 @@ void run_matrix_mul_app(const char * input_file_1, const char * input_file_2, co
     time = (stop.tv_sec - start.tv_sec) + (1e-6) * (stop.tv_usec - start.tv_usec);
     printf("Time taken to compute it in seconds =  %f\n", time);
     // Ready file to write results in.
-    add_subscript(output_file, "_2", temp);
+    add_subscript(output_file, "_ele", temp);
     // try to write the result matrix.
     if (!write_matrix(c, temp)) {
         fprintf(stderr, "Error while trying to write the result of element threaded multiplication.\n");
     }
     printf("\n");
-
-    /***
-    --*---*--               Uncomment this section to calculate results for sequentiel one thread multiplication        --*---*--
 
     // Get time and result of third method.
     gettimeofday(&start, NULL);
@@ -96,13 +93,12 @@ void run_matrix_mul_app(const char * input_file_1, const char * input_file_2, co
     time = (stop.tv_sec - start.tv_sec) + (1e-6) * (stop.tv_usec - start.tv_usec);
     printf("Time taken to compute it in seconds =  %f\n", time);
     // Ready file to write results in.
-    add_subscript(output_file, "_3", temp);
+    add_subscript(output_file, "_seq", temp);
     // try to write the result matrix.
     if (!write_matrix(c, temp)) {
         fprintf(stderr, "Error while trying to write the result of sequentiel multiplication.\n");
     }
 
-    ***/
     // Free resources.
     free_matrix(&a);
     free_matrix(&b);

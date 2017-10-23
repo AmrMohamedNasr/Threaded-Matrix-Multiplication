@@ -18,6 +18,8 @@ int multiply_threaded_elements(MATRIX * a, MATRIX * b, MATRIX * c) {
     int rc;
     // Error check to break out of loop in case of error.
     bool no_error = true;
+    // Set operation matrices.
+    set_operation_matrices(a, b, c);
     // Loop over rows of matrix a.
     for (i = 0; i < a->rows && no_error; i++) {
         // Loop over columns of matrix b.
@@ -30,9 +32,6 @@ int multiply_threaded_elements(MATRIX * a, MATRIX * b, MATRIX * c) {
                 no_error = true;
                 break;
             }
-            args[created_threads]->a = a;
-            args[created_threads]->b = b;
-            args[created_threads]->c = c;
             args[created_threads]->a_row = i;
             args[created_threads]->b_col = j;
             // Create the thread with the suitable method and its arguments.
@@ -73,6 +72,8 @@ int multiply_threaded_rows(MATRIX * a, MATRIX * b, MATRIX * c) {
     MATRIX_OPERATION_ARGS ** args = malloc(sizeof(MATRIX_OPERATION_ARGS *) * a->rows);
     // The return code of thread creation.
     int rc;
+    // Set operation matrices.
+    set_operation_matrices(a, b, c);
     // Loop over the rows of matrix a.
     for (i = 0; i < a->rows; i++) {
         // Prepare the arguments.
@@ -83,9 +84,6 @@ int multiply_threaded_rows(MATRIX * a, MATRIX * b, MATRIX * c) {
             rc = 1;
             break;
         }
-        args[created_threads]->a = a;
-        args[created_threads]->b = b;
-        args[created_threads]->c = c;
         args[created_threads]->a_row = i;
         // create the thread with the right method and send the arguments.
         rc = pthread_create(&threads[created_threads], NULL, calculate_row, (void *) args[created_threads]);

@@ -154,13 +154,9 @@ bool write_matrix(MATRIX matrix, const char * file_name) {
     if (file == NULL) {
         return false;
     }
-    /***
-
-     --*---*--             Uncomment this section to print meta data about matrix        --*---*--
-
     // Print some meta-data about the result matrix.
     fprintf(file, "row=%d col=%d\n", matrix.rows, matrix.cols);
-    ***/
+
     // Print the matrix elements in a suitable format.
     int i = 0, j = 0;
     for (i = 0; i < matrix.rows; i++) {
